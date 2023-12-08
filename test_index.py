@@ -192,5 +192,4 @@ def append_to(a, b):
         {"inputArgs": [[1], [2, 3]], "outputArgs": [[1, 2, 3]]},
     ]
     response, json_list, result_list = get_response(source, tests)
-    print(response.content)
     assert response.status_code == 422
