@@ -61,7 +61,7 @@ class ListPtr:
 
 class Test(BaseModel):
     inputArgs: list[Any]
-    outputArgs: list[Any] = None
+    outputArgs: Optional[list[Any]] = None
     output: Optional[Any] = None
 
     @model_validator(mode='after')
@@ -90,7 +90,7 @@ class ResultType(str, Enum):
 class BaseErrorResult(BaseModel):
     argNames: list[str]
     inputArgs: list[str]
-    expectedOutputArgs: list[str]
+    expectedOutputArgs: Optional[list[str]] = None
     expectedOutput: str
 
 
@@ -175,9 +175,10 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
     error_dict = {
         'argNames': get_arg_names(source, function_name),
         'inputArgs': [repr(arg) for arg in input_args],
-        'expectedOutputArgs': [repr(arg) for arg in output_args],
         'expectedOutput': repr(test.output),
     }
+    if output_args is not None:
+        error_dict['expectedOutputArgs'] = [repr(arg) for arg in output_args]
     try:
         compile(source, '<string>', 'exec')
     except Exception:

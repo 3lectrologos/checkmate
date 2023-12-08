@@ -35,6 +35,18 @@ def test_simple_success():
 def f(x):
     return x + 1
 '''
+    tests = [{"inputArgs": [1], "output": 2}]
+    response, _json_list, result_list = get_response(source, tests)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_simple_success_with_output_args():
+    source = '''
+def f(x):
+    return x + 1
+'''
     tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
@@ -42,12 +54,24 @@ def f(x):
     SuccessResult.model_validate_json(result_list[0])
 
 
+def test_simple_fail_with_output_args():
+    source = '''
+def f(x):
+    return x + 1
+'''
+    tests = [{"inputArgs": [1], "outputArgs": [2], "output": 2}]
+    response, _json_list, result_list = get_response(source, tests)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    FailResult.model_validate_json(result_list[0])
+
+
 def test_simple_syntax_error():
     source = '''
 def f(x):
     return x +
 '''
-    tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
+    tests = [{"inputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -59,7 +83,7 @@ def test_simple_runtime_error():
 def f(x):
     return x + foo()
 '''
-    tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
+    tests = [{"inputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -73,7 +97,7 @@ def f(x):
         pass
     return x + foo()
 '''
-    tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
+    tests = [{"inputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -87,7 +111,7 @@ def f(x):
 
 foo()
 '''
-    tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
+    tests = [{"inputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -99,7 +123,7 @@ def test_simple_fail():
 def f(x):
     return x + 2
 '''
-    tests = [{"inputArgs": [1], "outputArgs": [1], "output": 2}]
+    tests = [{"inputArgs": [1], "output": 2}]
     response, _json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -111,7 +135,7 @@ def test_fail_arg_names():
 def f(x, y):
     return x + 1 + y
 '''
-    tests = [{"inputArgs": [3, 1], "outputArgs": [3, 1], "output": 6}]
+    tests = [{"inputArgs": [3, 1], "output": 6}]
     response, json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -127,7 +151,7 @@ def bar(w, z):
 def f(x, y):
     return x + 1 + y
 '''
-    tests = [{"inputArgs": [3, 1], "outputArgs": [3, 1], "output": 6}]
+    tests = [{"inputArgs": [3, 1], "output": 6}]
     response, json_list, result_list = get_response_with_function_name(source, tests, 'f')
     assert response.status_code == 200
     assert len(result_list) == 1
@@ -145,7 +169,7 @@ baz()
 def bar(w, z):
     return w * z
 '''
-    tests = [{"inputArgs": [3, 1], "outputArgs": [3, 1], "output": 6}]
+    tests = [{"inputArgs": [3, 1], "output": 6}]
     response, json_list, result_list = get_response_with_function_name(source, tests, 'f')
     assert response.status_code == 200
     assert len(result_list) == 1
