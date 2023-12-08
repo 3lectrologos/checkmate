@@ -1,5 +1,5 @@
 # Run Python tests
 
-![CI](https://github.com/3lectrologos/run-python-tests/workflows/python-package.yml/badge.svg?event=push)
+![CI](https://github.com/3lectrologos/run-python-tests/actions/workflows/python-package.yml/badge.svg?event=push)
 
 An API for running a Python function on a number of input/output testcases.
