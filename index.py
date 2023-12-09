@@ -98,9 +98,6 @@ def transform_args(input_args, is_linked_list):
     return result
 
 
-app = FastAPI()
-
-
 def get_error_string(exc_info):
     exc_type, exc_value, exc_traceback = exc_info
     line_number = traceback.extract_tb(exc_traceback)[-1].lineno
@@ -153,7 +150,10 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
     return SuccessResult()
 
 
-@app.post('/api/python')
+app = FastAPI()
+
+
+@app.post('/run_python_tests')
 def run_tests(request: RequestData) -> List[Result]:
     results = []
     for test in request.tests:
