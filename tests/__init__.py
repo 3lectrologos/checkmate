@@ -1,6 +1,6 @@
 import json
 from fastapi.testclient import TestClient
-from run_python_tests import app
+from checkmate import app
 
 
 client = TestClient(app)

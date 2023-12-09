@@ -1,0 +1,23 @@
+[project]
+name = 'checkmate'
+description = 'An API for running Python tests'
+authors = [
+    {name = 'Alkis Gotovos', email = 'alkis.gotovos@gmail.com'},
+]
+license = 'MIT'
+requires-python = '>=3.9'
+dependencies = [
+    'pathos>=0.2.7',
+    'pydantic>=2.4.2',
+]
+
+[project.optional-dependencies]
+test = [
+    'fastapi>=0.100.1',
+    'httpx>=0.25.0',
+    'pytest',
+]
+api = [
+    'fastapi>=0.100.1',
+    'httpx>=0.25.0',
+]

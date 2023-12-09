@@ -1,5 +1,4 @@
-from run_python_tests import ResultType
-from run_python_tests import run_tests, Request
+from checkmate import Request, ResultType, run_tests
 from pydantic import ValidationError
 import pytest
 
