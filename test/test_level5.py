@@ -84,5 +84,27 @@ def when_run(a):
     response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
-    print(result_list[0])
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_only_some_output_args_of_interest():
+    source = '''
+def when_run(a, b):
+    while a.has_next():
+        b.set_value(a.get_value())
+        a.go_next()
+        b.go_next()
+    b.set_value(a.get_value())
+    while b.has_prev():
+        b.go_prev()
+    while a.has_prev():
+        a.set_value(b.get_value())
+        a.go_prev()
+        b.go_next()
+    a.set_value(b.get_value())
+'''
+    tests = [{"input_args": [[1, 2, 3], [0, 0, 0]], "output_args": [[3, 2, 1], None]}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
     SuccessResult.model_validate_json(result_list[0])

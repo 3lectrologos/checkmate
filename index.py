@@ -1,7 +1,5 @@
-import re
 import sys
 import traceback
-import inspect
 from enum import Enum
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
@@ -9,58 +7,12 @@ from pydantic.functional_validators import model_validator
 from typing import Optional, Literal, Union, List, Annotated, Any
 from pathos.multiprocessing import ProcessingPool
 from multiprocess.context import TimeoutError
+
 import syntax_check
+from linked_list import ListPtr
 
 
 TIMEOUT_SECONDS = 3
-
-
-class LinkedListError(Exception):
-    pass
-
-
-class ListPtr:
-    def __init__(self, lst, start_idx=0):
-        self._lst = list(lst)
-        self._idx = start_idx
-        self._MAX_VAL = 99
-        self._MIN_VAL = -99
-
-    def __repr__(self):
-        return repr(self._lst)
-
-    def __eq__(self, other):
-        return self._lst == other._lst
-
-    def go_next(self):
-        if self._idx < len(self._lst) - 1:
-            self._idx += 1
-        else:
-            caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: Cannot \'go_next\' at the end of linked list')
-
-    def go_prev(self):
-        if self._idx > 0:
-            self._idx -= 1
-        else:
-            caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: Cannot \'go_prev\' at the start of linked list')
-
-    def has_next(self):
-        return self._idx < len(self._lst) - 1
-
-    def has_prev(self):
-        return self._idx > 0
-
-    def get_value(self):
-        return self._lst[self._idx]
-
-    def set_value(self, value):
-        if isinstance(value, int) and self._MIN_VAL <= value <= self._MAX_VAL:
-            self._lst[self._idx] = value
-        else:
-            caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: List values must be integers between -99 and 99')
 
 
 class Test(BaseModel):
@@ -196,7 +148,7 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
         return FailResult(output=repr(result), output_args=[repr(arg) for arg in input_args], **error_dict)
     if output_args is not None:
         for i in range(len(output_args)):
-            if input_args[i] != output_args[i]:
+            if (output_args[i] is not None) and (input_args[i] != output_args[i]):
                 return FailResult(output=repr(result), output_args=[repr(arg) for arg in input_args], **error_dict)
     return SuccessResult()
 
