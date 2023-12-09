@@ -1,5 +1,5 @@
 from . import get_response
-from index import SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
+from run_python_tests import SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
 
 
 def test_linked_list_operations_not_available():
