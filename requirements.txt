@@ -1,4 +1,0 @@
-fastapi>=0.100.1
-pathos>=0.2.7
-pydantic>=2.4.2
-httpx>=0.25.0

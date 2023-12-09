@@ -4,14 +4,11 @@ import pytest
 
 
 def test_multi():
-    source = '''
+    source = """
 def f(x):
     return x + 1
-'''
-    tests = [
-        {"input_args": [1], "output": 2},
-        {"input_args": [2], "output": 4}
-    ]
+"""
+    tests = [{"input_args": [1], "output": 2}, {"input_args": [2], "output": 4}]
     request = Request(source=source.strip(), tests=tests)
     result = run_tests(request)
     assert len(result) == 2
@@ -20,10 +17,10 @@ def f(x):
 
 
 def test_unequal_input_output_args():
-    source = '''
+    source = """
 def concat(a, b):
     a += b
-'''
+"""
     tests = [
         {"input_args": [[1, 2], [3]], "output_args": [[1, 2, 3]]},
     ]

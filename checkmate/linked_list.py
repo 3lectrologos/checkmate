@@ -23,14 +23,18 @@ class ListPtr:
             self._idx += 1
         else:
             caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: Cannot \'go_next\' at the end of linked list')
+            raise LinkedListError(
+                f"Line {caller_lineno}: Cannot 'go_next' at the end of linked list"
+            )
 
     def go_prev(self):
         if self._idx > 0:
             self._idx -= 1
         else:
             caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: Cannot \'go_prev\' at the start of linked list')
+            raise LinkedListError(
+                f"Line {caller_lineno}: Cannot 'go_prev' at the start of linked list"
+            )
 
     def has_next(self):
         return self._idx < len(self._lst) - 1
@@ -46,4 +50,6 @@ class ListPtr:
             self._lst[self._idx] = value
         else:
             caller_lineno = inspect.getframeinfo(inspect.stack()[1][0]).lineno
-            raise LinkedListError(f'Line {caller_lineno}: List values must be integers between -99 and 99')
+            raise LinkedListError(
+                f"Line {caller_lineno}: List values must be integers between -99 and 99"
+            )

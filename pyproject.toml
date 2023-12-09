@@ -1,6 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = 'checkmate'
-description = 'An API for running Python tests'
+version = '0.1.0'
+description = 'An API for testing a Python function on an input / output suite.'
 authors = [
     {name = 'Alkis Gotovos', email = 'alkis.gotovos@gmail.com'},
 ]

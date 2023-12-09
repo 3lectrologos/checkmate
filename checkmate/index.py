@@ -20,10 +20,12 @@ class Test(BaseModel):
     output_args: Optional[list[Any]] = None
     output: Optional[Any] = None
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def check_input_output_same_length(self):
-        if self.output_args is not None and len(self.input_args) != len(self.output_args):
-            raise ValueError('The length of input_args and output_args are not equal')
+        if self.output_args is not None and len(self.input_args) != len(
+            self.output_args
+        ):
+            raise ValueError("The length of input_args and output_args are not equal")
         return self
 
 
@@ -36,11 +38,11 @@ class Request(BaseModel):
 
 
 class ResultType(str, Enum):
-    SYNTAX_ERROR = 'syntax_error'
-    RUNTIME_ERROR = 'runtime_error'
-    TIMEOUT = 'timeout'
-    FAIL = 'fail'
-    SUCCESS = 'success'
+    SYNTAX_ERROR = "syntax_error"
+    RUNTIME_ERROR = "runtime_error"
+    TIMEOUT = "timeout"
+    FAIL = "fail"
+    SUCCESS = "success"
 
 
 class BaseErrorResult(BaseModel):
@@ -75,8 +77,10 @@ class SuccessResult(BaseModel):
 
 
 Result = Annotated[
-    Union[SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult],
-    Field(discriminator='type')
+    Union[
+        SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
+    ],
+    Field(discriminator="type"),
 ]
 
 
@@ -102,7 +106,7 @@ def get_error_string(exc_info):
     exc_type, exc_value, exc_traceback = exc_info
     line_number = traceback.extract_tb(exc_traceback)[-1].lineno
     error_string = traceback.format_exception_only(exc_type, exc_value)[-1].strip()
-    return f'Line {line_number}. {error_string}'
+    return f"Line {line_number}. {error_string}"
 
 
 def run_with_timeout(fun, timeout_seconds, *args):
@@ -111,20 +115,24 @@ def run_with_timeout(fun, timeout_seconds, *args):
         return result.get(timeout=timeout_seconds)
 
 
-def run_one(source, test, function_name, is_linked_list=False, is_level5=False) -> Result:
+def run_one(
+    source, test, function_name, is_linked_list=False, is_level5=False
+) -> Result:
     input_args = transform_args(test.input_args, is_linked_list)
     timeout_input_args = transform_args(test.input_args, is_linked_list)
     output_args = transform_args(test.output_args, is_linked_list)
     error_dict = {
-        'input_args': [repr(arg) for arg in input_args],
-        'expected_output': repr(test.output),
+        "input_args": [repr(arg) for arg in input_args],
+        "expected_output": repr(test.output),
     }
     if output_args is not None:
-        error_dict['expected_output_args'] = [repr(arg) for arg in output_args]
+        error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
     try:
-        compile(source, '<string>', 'exec')
-        function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
-        error_dict['arg_names'] = arg_names
+        compile(source, "<string>", "exec")
+        function_name, arg_names = check_specification(
+            source, input_args, function_name, is_level5
+        )
+        error_dict["arg_names"] = arg_names
     except Exception:
         error_string = get_error_string(sys.exc_info())
         return SyntaxErrorResult(error=error_string)
@@ -142,21 +150,35 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
         error_string = get_error_string(sys.exc_info())
         return RuntimeErrorResult(error=error_string, **error_dict)
     if result != test.output:
-        return FailResult(output=repr(result), output_args=[repr(arg) for arg in input_args], **error_dict)
+        return FailResult(
+            output=repr(result),
+            output_args=[repr(arg) for arg in input_args],
+            **error_dict,
+        )
     if output_args is not None:
         for i in range(len(output_args)):
             if (output_args[i] is not None) and (input_args[i] != output_args[i]):
-                return FailResult(output=repr(result), output_args=[repr(arg) for arg in input_args], **error_dict)
+                return FailResult(
+                    output=repr(result),
+                    output_args=[repr(arg) for arg in input_args],
+                    **error_dict,
+                )
     return SuccessResult()
 
 
 app = FastAPI()
 
 
-@app.post('/run_python_tests')
+@app.post("/run_python_tests")
 def run_tests(request: Request) -> List[Result]:
     results = []
     for test in request.tests:
-        result = run_one(request.source, test, request.function_name, request.is_linked_list, request.is_level5)
+        result = run_one(
+            request.source,
+            test,
+            request.function_name,
+            request.is_linked_list,
+            request.is_level5,
+        )
         results.append(result)
     return results
