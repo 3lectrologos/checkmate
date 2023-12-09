@@ -1,16 +1,5 @@
-import json
-from fastapi.testclient import TestClient
-from index import app
+from . import get_response
 from index import SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
-
-
-client = TestClient(app)
-
-
-def get_response(source, tests, **kwargs):
-    request_args = {'source': source.strip(), 'tests': tests}
-    response = client.post('/api/python', json=dict(**request_args, **kwargs))
-    return response, response.json(), [json.dumps(result) for result in response.json()]
 
 
 def test_simple_success():
@@ -231,7 +220,6 @@ def foo(a):
     response, json_list, result_list = get_response(source, tests, function_name='bar')
     assert response.status_code == 200
     assert len(result_list) == 1
-    print(result_list[0])
     SyntaxErrorResult.model_validate_json(result_list[0])
 
 
@@ -266,6 +254,15 @@ def baz(a):
 '''
     tests = [{"input_args": [1, 2], "output": 12}]
     response, json_list, result_list = get_response(source, tests, function_name='baz')
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SyntaxErrorResult.model_validate_json(result_list[0])
+
+
+def test_empty_code():
+    source = ''
+    tests = [{"input_args": [1, 2], "output": 12}]
+    response, json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
     SyntaxErrorResult.model_validate_json(result_list[0])

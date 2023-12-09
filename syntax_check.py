@@ -23,6 +23,8 @@ class SpecificationCheckVisitor(ast.NodeVisitor):
     def __init__(self, input_args, function_name=None, is_level5=False):
         self.input_args = input_args
         self.function_name = function_name
+        if is_level5:
+            self.function_name = 'when_run'
         self.arg_names = None
         self.is_level_5 = is_level5
         self.function_def_found = False

@@ -1,0 +1,88 @@
+from . import get_response
+from index import SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
+
+
+def test_linked_list_operations_not_available():
+    source = '''
+def f(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    RuntimeErrorResult.model_validate_json(result_list[0])
+
+
+def test_linked_list_operations_available():
+    source = '''
+def f(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_when_run_not_found():
+    source = '''
+def f(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SyntaxErrorResult.model_validate_json(result_list[0])
+
+
+def test_when_run_found_list_operations_not_available():
+    source = '''
+def when_run(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    RuntimeErrorResult.model_validate_json(result_list[0])
+
+
+def test_when_run_found_list_operations_available():
+    source = '''
+def when_run(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_linked_list_modification():
+    source = '''
+def when_run(a):
+    while a.has_next():
+        a.set_value(0)
+        a.go_next()
+    a.set_value(0)
+'''
+    tests = [{"input_args": [[1, 2, 3]], "output_args": [[0, 0, 0]]}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    print(result_list[0])
+    SuccessResult.model_validate_json(result_list[0])
