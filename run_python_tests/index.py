@@ -8,8 +8,8 @@ from typing import Optional, Literal, Union, List, Annotated, Any
 from pathos.multiprocessing import ProcessingPool
 from multiprocess.context import TimeoutError
 
-import syntax_check
-from linked_list import ListPtr
+from .syntax_check import check_specification
+from .linked_list import ListPtr
 
 
 TIMEOUT_SECONDS = 3
@@ -27,7 +27,7 @@ class Test(BaseModel):
         return self
 
 
-class RequestData(BaseModel):
+class Request(BaseModel):
     source: str
     tests: list[Test]
     function_name: Optional[str] = None
@@ -123,7 +123,7 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
         error_dict['expected_output_args'] = [repr(arg) for arg in output_args]
     try:
         compile(source, '<string>', 'exec')
-        function_name, arg_names = syntax_check.check_specification(source, input_args, function_name, is_level5)
+        function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
         error_dict['arg_names'] = arg_names
     except Exception:
         error_string = get_error_string(sys.exc_info())
@@ -154,7 +154,7 @@ app = FastAPI()
 
 
 @app.post('/run_python_tests')
-def run_tests(request: RequestData) -> List[Result]:
+def run_tests(request: Request) -> List[Result]:
     results = []
     for test in request.tests:
         result = run_one(request.source, test, request.function_name, request.is_linked_list, request.is_level5)
