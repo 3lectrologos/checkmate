@@ -12,7 +12,7 @@ from .spec_check import check_specification, SpecificationError
 from .linked_list import ListPtr
 
 
-TIMEOUT_SECONDS = 3
+TIMEOUT_SECONDS = 4
 
 
 class Test(BaseModel):
