@@ -258,3 +258,33 @@ def test_empty_code():
     assert response.status_code == 200
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate_json(result_list[0])
+
+
+def test_nested_function():
+    source = """
+    def bar(a, b):
+        def foo(a, b):
+            return 10 * a + b
+
+        return foo(a, b)
+"""
+    tests = [{"input_args": [1, 2], "output": 12}]
+    response, json_list, result_list = get_response(source, tests)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_nested_function_not_found():
+    source = """
+    def bar(a, b):
+        def foo(a, b):
+            return 10 * a + b
+
+        return foo(a, b)
+"""
+    tests = [{"input_args": [1, 2], "output": 12}]
+    response, json_list, result_list = get_response(source, tests, function_name="foo")
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SpecificationErrorResult.model_validate_json(result_list[0])
