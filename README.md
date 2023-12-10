@@ -9,6 +9,7 @@ An API for testing a Python function on an input / output suite.
 
 
 ## Use locally without a server
+Go for this option if you want to call checkmate on your machine from your own Python code.
 
 ### Install
 ```bash
@@ -160,6 +161,7 @@ But it will also not interrupt infinite loops, so use with caution.
 
 
 ## Run local server
+Go for this option if you want to call checkmate using HTTP requests, e.g., from non-Python code.
 
 ### Install
 ```bash
