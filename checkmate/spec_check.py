@@ -40,7 +40,6 @@ class SpecificationCheckVisitor(ast.NodeVisitor):
     def visit_Import(self, node):
         if self.is_level_5:
             raise NoImportsAllowedError(node.lineno, "'import' statement not allowed")
-        self.generic_visit(node)
 
     def visit_FunctionDef(self, node):
         if not self.is_top_level():

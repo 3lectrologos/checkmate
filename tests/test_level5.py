@@ -159,3 +159,21 @@ def when_run(a):
     assert response.status_code == 200
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate_json(result_list[0])
+
+
+def test_nested_function_import():
+    source = """
+def when_run(a):
+    def foo():
+        import os
+
+    while a.has_next():
+        import numpy
+        a.go_next()
+    return a.get_value()
+"""
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SpecificationErrorResult.model_validate_json(result_list[0])

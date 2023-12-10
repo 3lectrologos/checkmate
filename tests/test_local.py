@@ -25,5 +25,4 @@ def concat(a, b):
         {"input_args": [[1, 2], [3]], "output_args": [[1, 2, 3]]},
     ]
     with pytest.raises(ValidationError):
-        request = Request(source=source.strip(), tests=tests)
-        run_tests(request)
+        Request(source=source.strip(), tests=tests)

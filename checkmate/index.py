@@ -1,15 +1,12 @@
 import sys
 import traceback
 import functools
+import multiprocessing
 from enum import Enum
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from pydantic.functional_validators import model_validator
 from typing import Optional, Literal, Union, List, Annotated, Any
-
-import multiprocessing
-from contextlib import asynccontextmanager
-from collections.abc import AsyncIterator
 
 from .spec_check import check_specification, SpecificationError
 from .linked_list import ListPtr
@@ -143,11 +140,8 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
     except SpecificationError as e:
         return SpecificationErrorResult(error=f"Line {e.lineno}. {str(e)}")
     process = multiprocessing.Process(target=worker, args=(source, function_name, timeout_input_args))
-    try:
-        process.start()
-        process.join(TIMEOUT_SECONDS)
-    except Exception:
-        pass
+    process.start()
+    process.join(TIMEOUT_SECONDS)
     if process.is_alive():
         process.terminate()
         return TimeoutResult(**error_dict)
@@ -174,13 +168,7 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
     return SuccessResult()
 
 
-@asynccontextmanager
-async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    multiprocessing.set_start_method("spawn")
-    yield
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 
 @app.post("/run_python_tests")

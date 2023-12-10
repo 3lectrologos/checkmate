@@ -30,4 +30,6 @@ jobs:
         python -m pip install .[test]
     - name: Test with pytest
       run: |
-        python -m pytest
+        coverage run -m pytest
+    - name: Coveralls
+      uses: coverallsapp/github-action@v2

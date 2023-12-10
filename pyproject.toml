@@ -21,6 +21,7 @@ test = [
     'fastapi>=0.100.1',
     'httpx>=0.25.0',
     'pytest',
+    'coverage',
 ]
 api = [
     'fastapi>=0.100.1',
