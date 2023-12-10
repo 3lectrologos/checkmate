@@ -173,7 +173,7 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
 app = FastAPI()
 
 
-@app.post("/run_python_tests")
+@app.post("/checkmate")
 def run_tests(request: Request) -> List[Result]:
     results = []
     for test in request.tests:

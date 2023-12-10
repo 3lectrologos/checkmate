@@ -8,7 +8,7 @@
 An API for testing a Python function on an input / output suite.
 
 
-## Local use (no server)
+## Use locally without a server
 
 ### Install
 ```bash
@@ -157,3 +157,50 @@ if __name__ == '__main__':
 Set `Request.check_timeout` to `False` to disable timeout checks (default is `True`).
 This may result in faster test runs, because it avoids spawning a separate process for each test.
 But it will also not interrupt infinite loops, so use with caution.
+
+
+## Run local server
+
+### Install
+```bash
+python -m pip install 'checkmate[api]@git+https://github.com/3lectrologos/checkmate.git'
+```
+
+### Run server
+```bash
+uvicorn checkmate:app
+```
+
+### Example
+```python
+import httpx
+import json
+
+
+url = 'http://127.0.0.1:8000/checkmate'
+
+
+source = """
+def foo(x):
+    return x + 1
+"""
+
+
+tests = [
+    {"input_args": [41], "output": 42},
+]
+
+
+request_data = {
+    'source': source,
+    'tests': tests,
+}
+
+
+post_result = httpx.post(url, data=json.dumps(request_data))
+results = json.loads(post_result.content)
+assert results[0]['type'] == 'success'
+```
+
+### FastAPI docs
+Go to `http://127.0.0.1:8000/docs/` to see the FastAPI docs and try out example requests.
