@@ -15,23 +15,47 @@ python -m pip install 'checkmate@git+https://github.com/3lectrologos/checkmate.g
 
 Example:
 ```python
+import pprint
 from checkmate import Request, run_tests
 
 
 source = """
 def add(x, y):
-    return x + y
+    return x / y
 """
 
 tests = [
-    {"input_args": [1], "output": 2},
-    {"input_args": [2], "output": 4},
+    {"input_args": [2, 2], "output": 1},
+    {"input_args": [3, 1], "output": 2},
+    {"input_args": [1], "output": 1},
+    {"input_args": [1, 0], "output": 1}
 ]
 
-request = Request(source=source, tests=tests)
-result = run_tests(request)
-for res in result:
-    print(res.type)
-#
-#
+
+if __name__ == '__main__':
+    request = Request(source=source, tests=tests)
+    results = run_tests(request)
+    for result in results:
+        pprint.pprint(result.model_dump())
+        print()
+
+#> {'type': <ResultType.SUCCESS: 'success'>}
+#> 
+#> {'arg_names': ['x', 'y'],
+#>  'expected_output': '2',
+#>  'expected_output_args': None,
+#>  'input_args': ['3', '1'],
+#>  'output': '3.0',
+#>  'output_args': ['3', '1'],
+#>  'type': <ResultType.FAIL: 'fail'>}
+#> 
+#> {'error': "Line 1. Function 'add' accepts 1 argument, but was given 2",
+#>  'type': <ResultType.SPECIFICATION_ERROR: 'specification_error'>}
+#> 
+#> {'arg_names': ['x', 'y'],
+#>  'error': 'Line 2. ZeroDivisionError: division by zero',
+#>  'expected_output': '1',
+#>  'expected_output_args': None,
+#>  'input_args': ['1', '0'],
+#>  'type': <ResultType.RUNTIME_ERROR: 'runtime_error'>}
 ```

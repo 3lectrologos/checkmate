@@ -11,7 +11,7 @@ import multiprocessing
 from contextlib import asynccontextmanager
 from collections.abc import AsyncIterator
 
-from .syntax_check import check_specification
+from .spec_check import check_specification, SpecificationError
 from .linked_list import ListPtr
 
 
@@ -40,6 +40,7 @@ class Request(BaseModel):
 
 class ResultType(str, Enum):
     SYNTAX_ERROR = "syntax_error"
+    SPECIFICATION_ERROR = "specification_error"
     RUNTIME_ERROR = "runtime_error"
     TIMEOUT = "timeout"
     FAIL = "fail"
@@ -55,6 +56,11 @@ class BaseErrorResult(BaseModel):
 
 class SyntaxErrorResult(BaseModel):
     type: Literal[ResultType.SYNTAX_ERROR] = ResultType.SYNTAX_ERROR
+    error: str
+
+
+class SpecificationErrorResult(BaseModel):
+    type: Literal[ResultType.SPECIFICATION_ERROR] = ResultType.SPECIFICATION_ERROR
     error: str
 
 
@@ -78,7 +84,7 @@ class SuccessResult(BaseModel):
 
 
 Result = Annotated[
-    Union[SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult],
+    Union[SuccessResult, SyntaxErrorResult, SpecificationErrorResult, RuntimeErrorResult, TimeoutResult, FailResult],
     Field(discriminator="type"),
 ]
 
@@ -90,8 +96,11 @@ def string_to_lambda(source, function_name):
 
 
 def worker(source, function_name, args):
-    fun = string_to_lambda(source, function_name)
-    fun(*args)
+    try:
+        fun = string_to_lambda(source, function_name)
+        fun(*args)
+    except Exception:
+        pass
 
 
 def transform_args(input_args, is_linked_list):
@@ -125,11 +134,14 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
         error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
     try:
         compile(source, "<string>", "exec")
-        function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
-        error_dict["arg_names"] = arg_names
     except Exception:
         error_string = get_error_string(sys.exc_info())
         return SyntaxErrorResult(error=error_string)
+    try:
+        function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
+        error_dict["arg_names"] = arg_names
+    except SpecificationError as e:
+        return SpecificationErrorResult(error=f"Line {e.lineno}. {str(e)}")
     process = multiprocessing.Process(target=worker, args=(source, function_name, timeout_input_args))
     try:
         process.start()
@@ -176,7 +188,7 @@ def run_tests(request: Request) -> List[Result]:
     results = []
     for test in request.tests:
         result = run_one(
-            request.source,
+            request.source.strip(),
             test,
             request.function_name,
             request.is_linked_list,

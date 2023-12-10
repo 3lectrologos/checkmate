@@ -1,7 +1,7 @@
 from . import get_response
 from checkmate import (
     SuccessResult,
-    SyntaxErrorResult,
+    SpecificationErrorResult,
     RuntimeErrorResult,
 )
 
@@ -45,7 +45,7 @@ def f(a):
     response, _json_list, result_list = get_response(source, tests, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
 
 
 def test_when_run_found_list_operations_not_available():
@@ -112,3 +112,50 @@ def when_run(a, b):
     assert response.status_code == 200
     assert len(result_list) == 1
     SuccessResult.model_validate_json(result_list[0])
+
+
+def test_outer_import_before():
+    source = """
+import os
+def when_run(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+"""
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SpecificationErrorResult.model_validate_json(result_list[0])
+
+
+def test_outer_import_after():
+    source = """
+def when_run(a):
+    while a.has_next():
+        a.go_next()
+    return a.get_value()
+
+import numpy
+"""
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SpecificationErrorResult.model_validate_json(result_list[0])
+
+
+def test_inner_import():
+    source = """
+def when_run(a):
+    import os
+    while a.has_next():
+        import numpy
+        a.go_next()
+    return a.get_value()
+"""
+    tests = [{"input_args": [[1, 2, 3]], "output": 3}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SpecificationErrorResult.model_validate_json(result_list[0])

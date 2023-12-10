@@ -2,6 +2,7 @@ from . import get_response
 from checkmate import (
     SuccessResult,
     SyntaxErrorResult,
+    SpecificationErrorResult,
     RuntimeErrorResult,
     FailResult,
 )
@@ -199,7 +200,7 @@ lst.append(42)
     response, json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
 
 
 def test_function_name_not_found():
@@ -211,7 +212,7 @@ def foo(a):
     response, json_list, result_list = get_response(source, tests, function_name="bar")
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
 
 
 def test_wrong_number_of_args_less():
@@ -229,7 +230,7 @@ def baz(a):
     response, json_list, result_list = get_response(source, tests, function_name="foo")
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
 
 
 def test_wrong_number_of_args_more():
@@ -247,7 +248,7 @@ def baz(a):
     response, json_list, result_list = get_response(source, tests, function_name="baz")
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
 
 
 def test_empty_code():
@@ -256,4 +257,4 @@ def test_empty_code():
     response, json_list, result_list = get_response(source, tests)
     assert response.status_code == 200
     assert len(result_list) == 1
-    SyntaxErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate_json(result_list[0])
