@@ -1,7 +1,7 @@
 # Checkmate
 
 [![CI](https://github.com/machine-teaching-group/checkmate/actions/workflows/CI.yml/badge.svg)](https://github.com/machine-teaching-group/checkmate/actions/workflows/CI.yml)
-![Codecov](https://img.shields.io/codecov/c/gh/3lectrologos/checkmate)
+![Codecov](https://img.shields.io/codecov/c/gh/machine-teaching-group/checkmate)
 ![version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fmachine-teaching-group%2Fcheckmate%2Fmain%2Fpyproject.toml)
 [![license](https://img.shields.io/github/license/machine-teaching-group/checkmate.svg)](https://github.com/machine-teaching-group/checkmate/blob/main/LICENSE)
 
