@@ -33,6 +33,7 @@ class Request(BaseModel):
     function_name: Optional[str] = None
     is_linked_list: Optional[bool] = False
     is_level5: Optional[bool] = False
+    check_timeout: Optional[bool] = True
 
 
 class ResultType(str, Enum):
@@ -119,7 +120,7 @@ def get_error_string(exc_info):
     return f"Line {line_number}. {error_string}"
 
 
-def run_one(source, test, function_name, is_linked_list=False, is_level5=False) -> Result:
+def run_one(source, test, function_name, is_linked_list, is_level5, check_timeout) -> Result:
     input_args = transform_args(test.input_args, is_linked_list)
     timeout_input_args = transform_args(test.input_args, is_linked_list)
     output_args = transform_args(test.output_args, is_linked_list)
@@ -139,12 +140,13 @@ def run_one(source, test, function_name, is_linked_list=False, is_level5=False) 
         error_dict["arg_names"] = arg_names
     except SpecificationError as e:
         return SpecificationErrorResult(error=f"Line {e.lineno}. {str(e)}")
-    process = multiprocessing.Process(target=worker, args=(source, function_name, timeout_input_args))
-    process.start()
-    process.join(TIMEOUT_SECONDS)
-    if process.is_alive():
-        process.terminate()
-        return TimeoutResult(**error_dict)
+    if check_timeout:
+        process = multiprocessing.Process(target=worker, args=(source, function_name, timeout_input_args))
+        process.start()
+        process.join(TIMEOUT_SECONDS)
+        if process.is_alive():
+            process.terminate()
+            return TimeoutResult(**error_dict)
     try:
         fun = string_to_lambda(source, function_name)
         result = fun(*input_args)
@@ -181,6 +183,7 @@ def run_tests(request: Request) -> List[Result]:
             request.function_name,
             request.is_linked_list,
             request.is_level5,
+            request.check_timeout,
         )
         results.append(result)
     return results
