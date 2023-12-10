@@ -1,9 +1,9 @@
 # Checkmate
 
-[![CI](https://github.com/3lectrologos/checkmate/actions/workflows/CI.yml/badge.svg)](https://github.com/3lectrologos/checkmate/actions/workflows/CI.yml)
+[![CI](https://github.com/machine-teaching-group/checkmate/actions/workflows/CI.yml/badge.svg)](https://github.com/machine-teaching-group/checkmate/actions/workflows/CI.yml)
 ![Codecov](https://img.shields.io/codecov/c/gh/3lectrologos/checkmate)
-![version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2F3lectrologos%2Fcheckmate%2Fmain%2Fpyproject.toml)
-[![license](https://img.shields.io/github/license/3lectrologos/checkmate.svg)](https://github.com/3lectrologos/checkmate/blob/main/LICENSE)
+![version](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Fmachine-teaching-group%2Fcheckmate%2Fmain%2Fpyproject.toml)
+[![license](https://img.shields.io/github/license/machine-teaching-group/checkmate.svg)](https://github.com/machine-teaching-group/checkmate/blob/main/LICENSE)
 
 An API for testing a Python function on an input / output suite.
 
@@ -13,7 +13,7 @@ Go for this option if you want to call checkmate on your machine from your own P
 
 ### Install
 ```bash
-python -m pip install 'checkmate@git+https://github.com/3lectrologos/checkmate.git'
+python -m pip install 'checkmate@git+https://github.com/machine-teaching-group/checkmate.git'
 ```
 
 ### Usage example
@@ -165,7 +165,7 @@ Go for this option if you want to call checkmate using HTTP requests, e.g., from
 
 ### Install
 ```bash
-python -m pip install 'checkmate[api]@git+https://github.com/3lectrologos/checkmate.git'
+python -m pip install 'checkmate[api]@git+https://github.com/machine-teaching-group/checkmate.git'
 ```
 
 ### Run server
