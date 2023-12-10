@@ -26,3 +26,6 @@ api = [
     'fastapi>=0.100.1',
     'httpx>=0.25.0',
 ]
+
+[tool.black]
+line-length = 119

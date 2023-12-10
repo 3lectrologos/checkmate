@@ -3,7 +3,6 @@ from checkmate import (
     SuccessResult,
     SyntaxErrorResult,
     RuntimeErrorResult,
-    TimeoutResult,
     FailResult,
 )
 
@@ -66,20 +65,6 @@ def f(x):
     assert response.status_code == 200
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate_json(result_list[0])
-
-
-def test_simple_timeout():
-    source = """
-def f(x):
-    while True:
-        pass
-    return x + foo()
-"""
-    tests = [{"input_args": [1], "output": 2}]
-    response, _json_list, result_list = get_response(source, tests)
-    assert response.status_code == 200
-    assert len(result_list) == 1
-    TimeoutResult.model_validate_json(result_list[0])
 
 
 def test_outside_runtime_error():

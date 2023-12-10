@@ -70,9 +70,7 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[1, 2, 3]], "output": 3}]
-    response, _json_list, result_list = get_response(
-        source, tests, is_linked_list=True, is_level5=True
-    )
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
     SuccessResult.model_validate_json(result_list[0])
@@ -87,9 +85,7 @@ def when_run(a):
     a.set_value(0)
 """
     tests = [{"input_args": [[1, 2, 3]], "output_args": [[0, 0, 0]]}]
-    response, _json_list, result_list = get_response(
-        source, tests, is_linked_list=True, is_level5=True
-    )
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
     SuccessResult.model_validate_json(result_list[0])
@@ -112,9 +108,7 @@ def when_run(a, b):
     a.set_value(b.get_value())
 """
     tests = [{"input_args": [[1, 2, 3], [0, 0, 0]], "output_args": [[3, 2, 1], None]}]
-    response, _json_list, result_list = get_response(
-        source, tests, is_linked_list=True, is_level5=True
-    )
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
     SuccessResult.model_validate_json(result_list[0])

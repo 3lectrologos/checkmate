@@ -1,12 +1,15 @@
 import sys
 import traceback
+import functools
 from enum import Enum
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from pydantic.functional_validators import model_validator
 from typing import Optional, Literal, Union, List, Annotated, Any
-from pathos.multiprocessing import ProcessingPool
-from multiprocess.context import TimeoutError
+
+import multiprocessing
+from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator
 
 from .syntax_check import check_specification
 from .linked_list import ListPtr
@@ -22,9 +25,7 @@ class Test(BaseModel):
 
     @model_validator(mode="after")
     def check_input_output_same_length(self):
-        if self.output_args is not None and len(self.input_args) != len(
-            self.output_args
-        ):
+        if self.output_args is not None and len(self.input_args) != len(self.output_args):
             raise ValueError("The length of input_args and output_args are not equal")
         return self
 
@@ -77,9 +78,7 @@ class SuccessResult(BaseModel):
 
 
 Result = Annotated[
-    Union[
-        SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult
-    ],
+    Union[SuccessResult, SyntaxErrorResult, RuntimeErrorResult, TimeoutResult, FailResult],
     Field(discriminator="type"),
 ]
 
@@ -87,7 +86,12 @@ Result = Annotated[
 def string_to_lambda(source, function_name):
     custom_namespace = {}
     exec(source, custom_namespace)
-    return lambda *args: custom_namespace[function_name](*args)
+    return functools.partial(custom_namespace[function_name])
+
+
+def worker(source, function_name, args):
+    fun = string_to_lambda(source, function_name)
+    fun(*args)
 
 
 def transform_args(input_args, is_linked_list):
@@ -109,15 +113,7 @@ def get_error_string(exc_info):
     return f"Line {line_number}. {error_string}"
 
 
-def run_with_timeout(fun, timeout_seconds, *args):
-    with ProcessingPool() as pool:
-        result = pool.apipe(fun, *args)
-        return result.get(timeout=timeout_seconds)
-
-
-def run_one(
-    source, test, function_name, is_linked_list=False, is_level5=False
-) -> Result:
+def run_one(source, test, function_name, is_linked_list=False, is_level5=False) -> Result:
     input_args = transform_args(test.input_args, is_linked_list)
     timeout_input_args = transform_args(test.input_args, is_linked_list)
     output_args = transform_args(test.output_args, is_linked_list)
@@ -129,20 +125,20 @@ def run_one(
         error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
     try:
         compile(source, "<string>", "exec")
-        function_name, arg_names = check_specification(
-            source, input_args, function_name, is_level5
-        )
+        function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
         error_dict["arg_names"] = arg_names
     except Exception:
         error_string = get_error_string(sys.exc_info())
         return SyntaxErrorResult(error=error_string)
+    process = multiprocessing.Process(target=worker, args=(source, function_name, timeout_input_args))
     try:
-        fun = string_to_lambda(source, function_name)
-        run_with_timeout(fun, TIMEOUT_SECONDS, *timeout_input_args)
-    except TimeoutError:
-        return TimeoutResult(**error_dict)
+        process.start()
+        process.join(TIMEOUT_SECONDS)
     except Exception:
         pass
+    if process.is_alive():
+        process.terminate()
+        return TimeoutResult(**error_dict)
     try:
         fun = string_to_lambda(source, function_name)
         result = fun(*input_args)
@@ -166,7 +162,13 @@ def run_one(
     return SuccessResult()
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    multiprocessing.set_start_method("spawn")
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.post("/run_python_tests")
