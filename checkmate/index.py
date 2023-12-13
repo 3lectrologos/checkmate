@@ -6,7 +6,7 @@ from enum import Enum
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from pydantic.functional_validators import model_validator
-from typing import Optional, Literal, Union, List, Annotated, Any
+from typing import Optional, Literal, Union, Annotated, Any
 
 from .spec_check import check_specification, SpecificationError
 from .linked_list import ListPtr
@@ -174,7 +174,7 @@ app = FastAPI()
 
 
 @app.post("/checkmate")
-def run_tests(request: Request) -> List[Result]:
+def run_tests(request: Request) -> list[Result]:
     results = []
     for test in request.tests:
         result = run_one(
