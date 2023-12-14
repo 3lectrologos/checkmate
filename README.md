@@ -46,11 +46,11 @@ if __name__ == '__main__':
 #> {'type': <ResultType.SUCCESS: 'success'>}
 #> 
 #> {'arg_names': ['x', 'y'],
-#>  'expected_output': '2',
+#>  'expected_output': 2,
 #>  'expected_output_args': None,
-#>  'input_args': ['3', '1'],
-#>  'output': '3.0',
-#>  'output_args': ['3', '1'],
+#>  'input_args': [3, 1],
+#>  'output': 3.0,
+#>  'output_args': [3, 1],
 #>  'type': <ResultType.FAIL: 'fail'>}
 #> 
 #> {'error': "Line 1. Function 'add' accepts 1 argument, but was given 2",
@@ -58,9 +58,9 @@ if __name__ == '__main__':
 #> 
 #> {'arg_names': ['x', 'y'],
 #>  'error': 'Line 2. ZeroDivisionError: division by zero',
-#>  'expected_output': '1',
+#>  'expected_output': 1,
 #>  'expected_output_args': None,
-#>  'input_args': ['1', '0'],
+#>  'input_args': [1, 0],
 #>  'type': <ResultType.RUNTIME_ERROR: 'runtime_error'>}
 ```
 
