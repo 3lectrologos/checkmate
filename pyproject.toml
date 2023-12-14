@@ -12,7 +12,6 @@ authors = [
 license = 'MIT'
 requires-python = '>=3.9'
 dependencies = [
-    'pathos>=0.2.7',
     'pydantic>=2.4.2',
 ]
 
