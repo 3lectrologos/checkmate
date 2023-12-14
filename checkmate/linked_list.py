@@ -12,9 +12,6 @@ class ListPtr:
         self._MAX_VAL = 99
         self._MIN_VAL = -99
 
-    def __repr__(self):
-        return repr(self._lst)
-
     def __eq__(self, other):
         return self._lst == other._lst
 
