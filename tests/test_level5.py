@@ -192,7 +192,6 @@ def when_run(a):
     response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert response.status_code == 200
     assert len(result_list) == 1
-    print(result_list[0])
     RuntimeErrorResult.model_validate_json(result_list[0])
 
 

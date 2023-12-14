@@ -36,9 +36,9 @@ class ResultType(str, Enum):
 
 class BaseErrorResult(BaseModel):
     arg_names: list[str]
-    input_args: list[str]
-    expected_output_args: Optional[list[str]] = None
-    expected_output: str
+    input_args: list[Any]
+    expected_output_args: Optional[list[Any]] = None
+    expected_output: Any
 
 
 class SyntaxErrorResult(BaseModel):
@@ -62,8 +62,8 @@ class TimeoutResult(BaseErrorResult):
 
 class FailResult(BaseErrorResult):
     type: Literal[ResultType.FAIL] = ResultType.FAIL
-    output_args: list[str]
-    output: str
+    output_args: list[Any]
+    output: Any
 
 
 class SuccessResult(BaseModel):

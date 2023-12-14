@@ -45,16 +45,26 @@ def get_error_string(exc_info):
     return f"Line {line_number}. {error_string}"
 
 
+def arg_list(args):
+    result_list = []
+    for arg in args:
+        if isinstance(arg, ListPtr):
+            result_list.append(arg._lst)
+        else:
+            result_list.append(arg)
+    return result_list
+
+
 def run_one(source, test, function_name, is_linked_list, is_level5, check_timeout) -> Result:
     input_args = transform_args(test.input_args, is_linked_list)
     timeout_input_args = transform_args(test.input_args, is_linked_list)
     output_args = transform_args(test.output_args, is_linked_list)
     error_dict = {
-        "input_args": [repr(arg) for arg in input_args],
-        "expected_output": repr(test.output),
+        "input_args": arg_list(input_args),
+        "expected_output": test.output,
     }
     if output_args is not None:
-        error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
+        error_dict["expected_output_args"] = arg_list(output_args)
     try:
         compile(source, "<string>", "exec")
     except Exception:
@@ -80,16 +90,16 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         return RuntimeErrorResult(error=error_string, **error_dict)
     if result != test.output:
         return FailResult(
-            output=repr(result),
-            output_args=[repr(arg) for arg in input_args],
+            output=result,
+            output_args=arg_list(input_args),
             **error_dict,
         )
     if output_args is not None:
         for i in range(len(output_args)):
             if (output_args[i] is not None) and (input_args[i] != output_args[i]):
                 return FailResult(
-                    output=repr(result),
-                    output_args=[repr(arg) for arg in input_args],
+                    output=result,
+                    output_args=arg_list(input_args),
                     **error_dict,
                 )
     return SuccessResult()
