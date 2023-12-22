@@ -32,7 +32,7 @@ def transform_args(input_args, is_linked_list):
     result = []
     for arg in input_args:
         if is_linked_list and isinstance(arg, list):
-            result.append(ListPtr(arg))
+            result.append(ListPtr(arg[0], arg[1]))
         else:
             result.append(arg)
     return result
@@ -49,7 +49,7 @@ def arg_list(args):
     result_list = []
     for arg in args:
         if isinstance(arg, ListPtr):
-            result_list.append(arg._lst)
+            result_list.append([arg._lst, arg._idx])
         else:
             result_list.append(arg)
     return result_list

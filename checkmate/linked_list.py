@@ -13,7 +13,9 @@ class ListPtr:
         self._MIN_VAL = -99
 
     def __eq__(self, other):
-        return self._lst == other._lst
+        if self._idx is None or other._idx is None:
+            return self._lst == other._lst
+        return self._lst == other._lst and self._idx == other._idx
 
     def go_next(self):
         if self._idx < len(self._lst) - 1:
