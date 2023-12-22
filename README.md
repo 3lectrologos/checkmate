@@ -125,6 +125,10 @@ This fixes the function name to `"when_run"` and disallows any user import state
 Set `Request.is_linked_list` to `True` to enable custom L5 linked lists (default is `False`).
 Any list in `input_args` or `output_args` will then be converted to a L5 linked list,
 and all L5 linked list operations are available to use.
+
+Linked list arguments have the form `[[1, 2, 3], 0]`, where the first element contains the list values,
+and the second the location of the pointer.
+The pointer location for `output_args` can be `None`, in which case any location will be considered correct.
 ```python
 from checkmate import Request, run_tests, ResultType
 
@@ -143,7 +147,7 @@ def when_run(a):
 
 
 tests = [
-    {"input_args": [[1, 2, 3]], "output_args": [[0, 0, 0]], "output": 6},
+    {"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]], "output": 6},
 ]
 
 
