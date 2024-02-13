@@ -288,3 +288,31 @@ def test_nested_function_not_found():
     assert response.status_code == 200
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate_json(result_list[0])
+
+
+def test_recursion_success():
+    source = """
+    def foo(a):
+        if a == 0:
+            return 0
+        return foo(a - 1)
+"""
+    tests = [{"input_args": [5], "output": 0}]
+    response, json_list, result_list = get_response(source, tests, function_name="foo")
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    SuccessResult.model_validate_json(result_list[0])
+
+
+def test_recursion_infinite_error():
+    source = """
+    def foo(a):
+        if a == 0:
+            return 0
+        return foo(a - 1)
+"""
+    tests = [{"input_args": [-1], "output": 0}]
+    response, json_list, result_list = get_response(source, tests, function_name="foo")
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    RuntimeErrorResult.model_validate_json(result_list[0])
