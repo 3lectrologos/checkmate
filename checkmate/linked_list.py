@@ -13,6 +13,8 @@ class ListPtr:
         self._MIN_VAL = -99
 
     def __eq__(self, other):
+        if not isinstance(other, ListPtr):
+            return False
         if self._idx is None or other._idx is None:
             return self._lst == other._lst
         return self._lst == other._lst and self._idx == other._idx

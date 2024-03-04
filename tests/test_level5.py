@@ -247,3 +247,15 @@ def when_run(a):
     assert response.status_code == 200
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate_json(result_list[0])
+
+
+def test_linked_list_returned():
+    source = """
+def when_run(a):
+    return a
+"""
+    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[1, 2, 3], 0]]}]
+    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert response.status_code == 200
+    assert len(result_list) == 1
+    FailResult.model_validate_json(result_list[0])

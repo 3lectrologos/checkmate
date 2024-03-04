@@ -90,7 +90,7 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         return RuntimeErrorResult(error=error_string, **error_dict)
     if result != test.output:
         return FailResult(
-            output=result,
+            output=arg_list([result])[0],
             output_args=arg_list(input_args),
             **error_dict,
         )
