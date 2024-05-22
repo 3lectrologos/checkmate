@@ -10,10 +10,9 @@ def f(x):
     return x + foo()
 """
     tests = [{"input_args": [1], "output": 2}]
-    response, _json_list, result_list = get_response(source, tests, check_timeout=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    TimeoutResult.model_validate_json(result_list[0])
+    TimeoutResult.model_validate(result_list[0])
 
 
 def test_outer_timeout():
@@ -25,10 +24,9 @@ while True:
     pass
 """
     tests = [{"input_args": [1], "output": 2}]
-    response, _json_list, result_list = get_response(source, tests, check_timeout=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    TimeoutResult.model_validate_json(result_list[0])
+    TimeoutResult.model_validate(result_list[0])
 
 
 def test_timeout_with_exception():
@@ -42,7 +40,6 @@ def f(x):
     return x + foo()
 """
     tests = [{"input_args": [1], "output": 2}]
-    response, _json_list, result_list = get_response(source, tests, check_timeout=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])

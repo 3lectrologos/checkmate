@@ -2,7 +2,6 @@ import sys
 import traceback
 import functools
 import multiprocessing
-from fastapi import FastAPI
 from .types import *
 
 from .spec_check import check_specification, SpecificationError
@@ -38,7 +37,11 @@ def transform_args(input_args, is_linked_list):
     return result
 
 
-def get_error_string(exc_info):
+def get_syntax_error_string(e):
+    return f"Line {e.lineno}. {e.msg}"
+
+
+def get_runtime_error_string(exc_info):
     exc_type, exc_value, exc_traceback = exc_info
     line_number = traceback.extract_tb(exc_traceback)[-1].lineno
     error_string = traceback.format_exception_only(exc_type, exc_value)[-1].strip()
@@ -67,8 +70,8 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         error_dict["expected_output_args"] = arg_list(output_args)
     try:
         compile(source, "<string>", "exec")
-    except Exception:
-        error_string = get_error_string(sys.exc_info())
+    except Exception as e:
+        error_string = get_syntax_error_string(e)
         return SyntaxErrorResult(error=error_string)
     try:
         function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
@@ -86,7 +89,7 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         fun = string_to_lambda(source, function_name)
         result = fun(*input_args)
     except Exception:
-        error_string = get_error_string(sys.exc_info())
+        error_string = get_runtime_error_string(sys.exc_info())
         return RuntimeErrorResult(error=error_string, **error_dict)
     if result != test.output:
         return FailResult(
@@ -105,10 +108,6 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
     return SuccessResult()
 
 
-app = FastAPI()
-
-
-@app.post("/checkmate")
 def run_tests(request: Request) -> list[Result]:
     results = []
     for test in request.tests:

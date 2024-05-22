@@ -1,6 +1,5 @@
 from enum import Enum
-from pydantic import BaseModel, Field
-from pydantic.functional_validators import model_validator
+from pydantic import BaseModel, Field, root_validator
 from typing import Optional, Literal, Union, Annotated, Any
 
 
@@ -9,11 +8,13 @@ class Test(BaseModel):
     output_args: Optional[list[Any]] = None
     output: Optional[Any] = None
 
-    @model_validator(mode="after")
-    def check_input_output_same_length(self):
-        if self.output_args is not None and len(self.input_args) != len(self.output_args):
+    @root_validator(skip_on_failure=True)
+    def check_input_output_same_length(cls, values):
+        input_args = values.get("input_args")
+        output_args = values.get("output_args")
+        if output_args is not None and len(input_args) != len(output_args):
             raise ValueError("The length of input_args and output_args are not equal")
-        return self
+        return values
 
 
 class Request(BaseModel):

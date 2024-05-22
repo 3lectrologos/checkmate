@@ -1,2 +1,2 @@
 from .types import *
-from .index import app, run_tests
+from .index import run_tests

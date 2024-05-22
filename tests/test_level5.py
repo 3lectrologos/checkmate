@@ -10,10 +10,9 @@ def f(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests)
-    assert response.status_code == 200
+    result_list = get_response(source, tests)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_operations_available():
@@ -24,10 +23,9 @@ def f(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate_json(result_list[0])
+    SuccessResult.model_validate(result_list[0])
 
 
 def test_when_run_not_found():
@@ -38,10 +36,9 @@ def f(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_when_run_found_list_operations_not_available():
@@ -52,10 +49,9 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])
 
 
 def test_when_run_found_list_operations_available():
@@ -66,10 +62,9 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate_json(result_list[0])
+    SuccessResult.model_validate(result_list[0])
 
 
 def test_linked_list_modification():
@@ -81,10 +76,9 @@ def when_run(a):
     a.set_value(0)
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate_json(result_list[0])
+    SuccessResult.model_validate(result_list[0])
 
 
 def test_linked_list_pointer_location_matters_fail():
@@ -96,10 +90,9 @@ def when_run(a):
     a.set_value(0)
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], 0]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    FailResult.model_validate_json(result_list[0])
+    FailResult.model_validate(result_list[0])
 
 
 def test_linked_list_pointer_location_matters_success():
@@ -111,10 +104,9 @@ def when_run(a):
     a.set_value(0)
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], 2]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate_json(result_list[0])
+    SuccessResult.model_validate(result_list[0])
 
 
 def test_only_some_output_args_of_interest():
@@ -134,10 +126,9 @@ def when_run(a, b):
     a.set_value(b.get_value())
 """
     tests = [{"input_args": [[[1, 2, 3], 0], [[0, 0, 0], 0]], "output_args": [[[3, 2, 1], None], None]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate_json(result_list[0])
+    SuccessResult.model_validate(result_list[0])
 
 
 def test_outer_import_before():
@@ -149,10 +140,9 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_outer_import_after():
@@ -165,10 +155,9 @@ def when_run(a):
 import numpy
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_inner_import():
@@ -181,10 +170,9 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_nested_function_import():
@@ -199,10 +187,9 @@ def when_run(a):
     return a.get_value()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate_json(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_out_of_bounds_right():
@@ -215,10 +202,9 @@ def when_run(a):
     a.go_next()
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_out_of_bounds_left():
@@ -231,10 +217,9 @@ def when_run(a):
     a.set_value(0)
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_invalid_value():
@@ -243,10 +228,9 @@ def when_run(a):
     a.set_value('foo')
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate_json(result_list[0])
+    RuntimeErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_returned():
@@ -255,7 +239,6 @@ def when_run(a):
     return a
 """
     tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[1, 2, 3], 0]]}]
-    response, _json_list, result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
-    assert response.status_code == 200
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    FailResult.model_validate_json(result_list[0])
+    FailResult.model_validate(result_list[0])
