@@ -15,7 +15,7 @@ def test_simple_success():
 def f(x):
     return x + 1
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -26,7 +26,7 @@ def test_simple_success_with_output_args():
 def f(x):
     return x + 1
 """
-    tests = [{"input_args": [1], "output_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -37,7 +37,7 @@ def test_simple_fail_with_output_args():
 def f(x):
     return x + 1
 """
-    tests = [{"input_args": [1], "output_args": [2], "output": 2}]
+    tests = [{"input_args": ["1"], "output_args": ["2"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
@@ -48,7 +48,7 @@ def test_simple_syntax_error():
 def f(x):
     return x +
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SyntaxErrorResult.model_validate(result_list[0])
@@ -59,7 +59,7 @@ def test_simple_runtime_error():
 def f(x):
     return x + foo()
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
@@ -72,7 +72,7 @@ def f(x):
 
 foo()
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
@@ -83,7 +83,7 @@ def test_simple_fail():
 def f(x):
     return x + 2
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
@@ -94,7 +94,7 @@ def test_fail_arg_names():
 def f(x, y):
     return x + 1 + y
 """
-    tests = [{"input_args": [3, 1], "output": 6}]
+    tests = [{"input_args": ["3", "1"], "output": "6"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
@@ -109,7 +109,7 @@ def bar(w, z):
 def f(x, y):
     return x + 1 + y
 """
-    tests = [{"input_args": [3, 1], "output": 6}]
+    tests = [{"input_args": ["3", "1"], "output": "6"}]
     result_list = get_response(source, tests, function_name="f")
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
@@ -126,7 +126,7 @@ baz()
 def bar(w, z):
     return w * z
 """
-    tests = [{"input_args": [3, 1], "output": 6}]
+    tests = [{"input_args": ["3", "1"], "output": "6"}]
     result_list = get_response(source, tests, function_name="f")
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
@@ -138,7 +138,7 @@ def test_one_output_arg_success():
 def f(lst):
     lst.append(42)
 """
-    tests = [{"input_args": [[]], "output_args": [[42]]}]
+    tests = [{"input_args": ["[]"], "output_args": ["[42]"]}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -150,9 +150,9 @@ def append_to(a, b):
     a += b
 """
     tests = [
-        {"input_args": [[1], [2, 3]], "output_args": [[1, 2, 3], [2, 3]]},
-        {"input_args": [[], []], "output_args": [[], []]},
-        {"input_args": [[], [2, 3]], "output_args": [[2, 3], [2, 3]]},
+        {"input_args": ["[1]", "[2, 3]"], "output_args": ["[1, 2, 3]", "[2, 3]"]},
+        {"input_args": ["[]", "[]"], "output_args": ["[]", "[]"]},
+        {"input_args": ["[]", "[2, 3]"], "output_args": ["[2, 3]", "[2, 3]"]},
     ]
     result_list = get_response(source, tests)
     assert len(result_list) == 3
@@ -166,10 +166,9 @@ def test_unequal_length_input_output_arg_lists():
 def append_to(a, b):
     a += b
 """
-    tests = [{"input_args": [[1], [2, 3]], "output_args": [[1, 2, 3]]}]
-    with pytest.raises(ValueError) as e:
+    tests = [{"input_args": ["[1]", "[2, 3]"], "output_args": ["[1, 2, 3]"]}]
+    with pytest.raises(ValueError, match="The length of input_args and output_args are not equal"):
         get_response(source, tests)
-        assert str(e) == "The length of input_args and output_args are not equal"
 
 
 def test_empty_list_of_tests():
@@ -186,7 +185,7 @@ def test_no_function_in_source():
     source = """
 lst.append(42)
 """
-    tests = [{"input_args": [1], "output": 2}]
+    tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -197,7 +196,7 @@ def test_function_name_not_found():
 def foo(a):
     return a + 42
 """
-    tests = [{"input_args": [1], "output": 43}]
+    tests = [{"input_args": ["1"], "output": "43"}]
     result_list = get_response(source, tests, function_name="bar")
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -214,7 +213,7 @@ def foo(a, b, c):
 def baz(a):
     return 10 * a + 2
 """
-    tests = [{"input_args": [1, 2], "output": 12}]
+    tests = [{"input_args": ["1", "2"], "output": "12"}]
     result_list = get_response(source, tests, function_name="foo")
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -231,7 +230,7 @@ def foo(a, b, c):
 def baz(a):
     return 10 * a + 2
 """
-    tests = [{"input_args": [1, 2], "output": 12}]
+    tests = [{"input_args": ["1", "2"], "output": "12"}]
     result_list = get_response(source, tests, function_name="baz")
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -239,7 +238,7 @@ def baz(a):
 
 def test_empty_code():
     source = ""
-    tests = [{"input_args": [1, 2], "output": 12}]
+    tests = [{"input_args": ["1", "2"], "output": "12"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -247,13 +246,13 @@ def test_empty_code():
 
 def test_nested_function():
     source = """
-    def bar(a, b):
-        def foo(a, b):
-            return 10 * a + b
+def bar(a, b):
+    def foo(a, b):
+        return 10 * a + b
 
-        return foo(a, b)
+    return foo(a, b)
 """
-    tests = [{"input_args": [1, 2], "output": 12}]
+    tests = [{"input_args": ["1", "2"], "output": "12"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -261,13 +260,13 @@ def test_nested_function():
 
 def test_nested_function_not_found():
     source = """
-    def bar(a, b):
-        def foo(a, b):
-            return 10 * a + b
+def bar(a, b):
+    def foo(a, b):
+        return 10 * a + b
 
-        return foo(a, b)
+    return foo(a, b)
 """
-    tests = [{"input_args": [1, 2], "output": 12}]
+    tests = [{"input_args": ["1", "2"], "output": "12"}]
     result_list = get_response(source, tests, function_name="foo")
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -275,12 +274,12 @@ def test_nested_function_not_found():
 
 def test_recursion_success():
     source = """
-    def foo(a):
-        if a == 0:
-            return 0
-        return foo(a - 1)
+def foo(a):
+    if a == 0:
+        return 0
+    return foo(a - 1)
 """
-    tests = [{"input_args": [5], "output": 0}]
+    tests = [{"input_args": ["5"], "output": "0"}]
     result_list = get_response(source, tests, function_name="foo")
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -288,12 +287,56 @@ def test_recursion_success():
 
 def test_recursion_infinite_error():
     source = """
-    def foo(a):
-        if a == 0:
-            return 0
-        return foo(a - 1)
+def foo(a):
+    if a == 0:
+        return 0
+    return foo(a - 1)
 """
-    tests = [{"input_args": [-1], "output": 0}]
+    tests = [{"input_args": ["-1"], "output": "0"}]
     result_list = get_response(source, tests, function_name="foo")
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
+
+
+def test_tuple_output():
+    source = """
+def foo(a):
+    return a, a + 1
+"""
+    tests = [{"input_args": ["1"], "output": "(1, 2)"}]
+    result_list = get_response(source, tests)
+    assert len(result_list) == 1
+    SuccessResult.model_validate(result_list[0])
+
+
+def test_tuple_output_list_expected():
+    source = """
+def foo(a):
+    return a, a + 1
+"""
+    tests = [{"input_args": ["1"], "output": "[1, 2]"}]
+    result_list = get_response(source, tests)
+    assert len(result_list) == 1
+    FailResult.model_validate(result_list[0])
+
+
+def test_list_output_tuple_expected():
+    source = """
+def foo(a):
+    return [a, a + 1]
+"""
+    tests = [{"input_args": ["1"], "output": "(1, 2)"}]
+    result_list = get_response(source, tests)
+    assert len(result_list) == 1
+    FailResult.model_validate(result_list[0])
+
+
+def test_single_output_tuple_expected():
+    source = """
+def foo(a):
+    return a
+"""
+    tests = [{"input_args": ["1"], "output": "(1, 2)"}]
+    result_list = get_response(source, tests)
+    assert len(result_list) == 1
+    FailResult.model_validate(result_list[0])

@@ -9,10 +9,10 @@ def f(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_linked_list_operations_available():
@@ -22,7 +22,7 @@ def f(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -35,7 +35,7 @@ def f(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -48,10 +48,10 @@ def when_run(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    SpecificationErrorResult.model_validate(result_list[0])
 
 
 def test_when_run_found_list_operations_available():
@@ -61,7 +61,7 @@ def when_run(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -75,7 +75,7 @@ def when_run(a):
         a.go_next()
     a.set_value(0)
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -89,7 +89,7 @@ def when_run(a):
         a.go_next()
     a.set_value(0)
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], 0]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 0)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
@@ -103,7 +103,7 @@ def when_run(a):
         a.go_next()
     a.set_value(0)
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], 2]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 2)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -125,7 +125,12 @@ def when_run(a, b):
         b.go_next()
     a.set_value(b.get_value())
 """
-    tests = [{"input_args": [[[1, 2, 3], 0], [[0, 0, 0], 0]], "output_args": [[[3, 2, 1], None], None]}]
+    tests = [
+        {
+            "input_args": ["ListPtr([1, 2, 3], 0)", "ListPtr([0, 0, 0], 0)"],
+            "output_args": ["ListPtr([3, 2, 1], None)", None],
+        }
+    ]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SuccessResult.model_validate(result_list[0])
@@ -139,7 +144,7 @@ def when_run(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -154,7 +159,7 @@ def when_run(a):
 
 import numpy
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -169,7 +174,7 @@ def when_run(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -186,7 +191,7 @@ def when_run(a):
         a.go_next()
     return a.get_value()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output": 3}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     SpecificationErrorResult.model_validate(result_list[0])
@@ -201,7 +206,7 @@ def when_run(a):
     a.set_value(0)
     a.go_next()
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
@@ -216,7 +221,7 @@ def when_run(a):
         a.go_next()
     a.set_value(0)
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
@@ -227,18 +232,44 @@ def test_linked_list_invalid_value():
 def when_run(a):
     a.set_value('foo')
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[0, 0, 0], None]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
 
 
-def test_linked_list_returned():
+def test_linked_list_output_args():
     source = """
 def when_run(a):
     return a
 """
-    tests = [{"input_args": [[[1, 2, 3], 0]], "output_args": [[[1, 2, 3], 0]]}]
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 0)"]}]
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert len(result_list) == 1
+    FailResult.model_validate(result_list[0])
+
+
+def test_linked_list_output():
+    source = """
+def when_run(a):
+    while a.has_next():
+        a.set_value(0)
+        a.go_next()
+    a.set_value(0)
+    return a
+"""
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "ListPtr([0, 0, 0], 2)"}]
+    result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
+    assert len(result_list) == 1
+    SuccessResult.model_validate(result_list[0])
+
+
+def test_linked_list_output_compared_to_other_type():
+    source = """
+def when_run(a):
+    return [(0, 0, 0), 0]
+"""
+    tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "ListPtr([0, 0, 0], 0)"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])

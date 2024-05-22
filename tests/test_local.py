@@ -8,7 +8,7 @@ def test_multi():
 def f(x):
     return x + 1
 """
-    tests = [{"input_args": [1], "output": 2}, {"input_args": [2], "output": 4}]
+    tests = [{"input_args": ["1"], "output": "2"}, {"input_args": ["2"], "output": "4"}]
     request = Request(source=source.strip(), tests=tests)
     result = run_tests(request)
     assert len(result) == 2
@@ -22,7 +22,7 @@ def concat(a, b):
     a += b
 """
     tests = [
-        {"input_args": [[1, 2], [3]], "output_args": [[1, 2, 3]]},
+        {"input_args": ["[1, 2]", "[3]"], "output_args": ["[1, 2, 3]"]},
     ]
     with pytest.raises(ValidationError):
         Request(source=source.strip(), tests=tests)

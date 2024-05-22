@@ -5,7 +5,6 @@ import multiprocessing
 from .types import *
 
 from .spec_check import check_specification, SpecificationError
-from .linked_list import ListPtr
 
 
 TIMEOUT_SECONDS = 4
@@ -25,16 +24,18 @@ def worker(source, function_name, args):
         pass
 
 
-def transform_args(input_args, is_linked_list):
-    if input_args is None:
+def parse_args(args, linked_list):
+    if args is None:
         return None
-    result = []
-    for arg in input_args:
-        if is_linked_list and isinstance(arg, list):
-            result.append(ListPtr(arg[0], arg[1]))
-        else:
-            result.append(arg)
-    return result
+    return [parse_arg(arg, linked_list) for arg in args]
+
+
+def parse_arg(arg, linked_list):
+    if linked_list:
+        from .linked_list import ListPtr
+    if arg is None:
+        return None
+    return eval(arg)
 
 
 def get_syntax_error_string(e):
@@ -48,26 +49,21 @@ def get_runtime_error_string(exc_info):
     return f"Line {line_number}. {error_string}"
 
 
-def arg_list(args):
-    result_list = []
-    for arg in args:
-        if isinstance(arg, ListPtr):
-            result_list.append([arg._lst, arg._idx])
-        else:
-            result_list.append(arg)
-    return result_list
-
-
 def run_one(source, test, function_name, is_linked_list, is_level5, check_timeout) -> Result:
-    input_args = transform_args(test.input_args, is_linked_list)
-    timeout_input_args = transform_args(test.input_args, is_linked_list)
-    output_args = transform_args(test.output_args, is_linked_list)
+    try:
+        input_args = parse_args(test.input_args, linked_list=is_linked_list)
+        timeout_input_args = parse_args(test.input_args, linked_list=is_linked_list)
+        output_args = parse_args(test.output_args, linked_list=is_linked_list)
+        parsed_output = parse_arg(test.output, linked_list=is_linked_list)
+    except Exception as e:
+        return SpecificationErrorResult(error="Invalid test specification.")
+
     error_dict = {
-        "input_args": arg_list(input_args),
+        "input_args": [repr(arg) for arg in input_args],
         "expected_output": test.output,
     }
     if output_args is not None:
-        error_dict["expected_output_args"] = arg_list(output_args)
+        error_dict["expected_output_args"] = output_args
     try:
         compile(source, "<string>", "exec")
     except Exception as e:
@@ -91,18 +87,18 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
     except Exception:
         error_string = get_runtime_error_string(sys.exc_info())
         return RuntimeErrorResult(error=error_string, **error_dict)
-    if result != test.output:
+    if parsed_output is not None and result != parsed_output:
         return FailResult(
-            output=arg_list([result])[0],
-            output_args=arg_list(input_args),
+            output=repr(result),
+            output_args=[repr(arg) for arg in input_args],
             **error_dict,
         )
     if output_args is not None:
         for i in range(len(output_args)):
             if (output_args[i] is not None) and (input_args[i] != output_args[i]):
                 return FailResult(
-                    output=result,
-                    output_args=arg_list(input_args),
+                    output=repr(result),
+                    output_args=[repr(arg) for arg in input_args],
                     **error_dict,
                 )
     return SuccessResult()

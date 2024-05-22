@@ -19,6 +19,9 @@ class ListPtr:
             return self._lst == other._lst
         return self._lst == other._lst and self._idx == other._idx
 
+    def __repr__(self):
+        return f"ListPtr({self._lst}, {self._idx})"
+
     def go_next(self):
         if self._idx < len(self._lst) - 1:
             self._idx += 1
