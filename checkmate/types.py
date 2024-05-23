@@ -7,6 +7,7 @@ class Test(BaseModel):
     input_args: list[Any]
     output_args: Optional[list[Any]] = None
     output: Optional[Any] = None
+    function_name: Optional[str] = None
 
     @root_validator(skip_on_failure=True)
     def check_input_output_same_length(cls, values):

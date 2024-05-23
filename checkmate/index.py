@@ -107,10 +107,11 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
 def run_tests(request: Request) -> list[Result]:
     results = []
     for test in request.tests:
+        function_name = test.function_name if test.function_name is not None else request.function_name
         result = run_one(
             request.source.strip(),
             test,
-            request.function_name,
+            function_name,
             request.is_linked_list,
             request.is_level5,
             request.check_timeout,

@@ -340,3 +340,55 @@ def foo(a):
     result_list = get_response(source, tests)
     assert len(result_list) == 1
     FailResult.model_validate(result_list[0])
+
+
+def test_function_name_in_test():
+    source = """
+def foo(a):
+    return a
+
+def bar(a):
+    return a + 1
+"""
+    tests = [{"input_args": ["1"], "output": "2", "function_name": "bar"}]
+    result_list = get_response(source, tests)
+    SuccessResult.model_validate(result_list[0])
+
+
+def test_different_function_names_in_tests():
+    source = """
+def foo(a):
+    return a
+
+def bar(a):
+    return a + 1
+"""
+    tests = [
+        {"input_args": ["1"], "output": "2", "function_name": "bar"},
+        {"input_args": ["1"], "output": "1", "function_name": "foo"}
+    ]
+    result_list = get_response(source, tests)
+    SuccessResult.model_validate(result_list[0])
+    SuccessResult.model_validate(result_list[1])
+
+
+def test_override_different_function_names_in_tests():
+    source = """
+def baz(a):
+    return a - 1
+
+def foo(a):
+    return a
+
+def bar(a):
+    return a + 1
+"""
+    tests = [
+        {"input_args": ["1"], "output": "2", "function_name": "bar"},
+        {"input_args": ["1"], "output": "1", "function_name": "foo"},
+        {"input_args": ["1"], "output": "0"},
+    ]
+    result_list = get_response(source, tests)
+    SuccessResult.model_validate(result_list[0])
+    SuccessResult.model_validate(result_list[1])
+    SuccessResult.model_validate(result_list[2])
