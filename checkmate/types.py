@@ -41,6 +41,7 @@ class BaseErrorResult(BaseModel):
     input_args: list[Any]
     expected_output_args: Optional[list[Any]] = None
     expected_output: Any
+    function_name: str
 
 
 class SyntaxErrorResult(BaseModel):

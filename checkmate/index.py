@@ -72,6 +72,7 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
     try:
         function_name, arg_names = check_specification(source, input_args, function_name, is_level5)
         error_dict["arg_names"] = arg_names
+        error_dict["function_name"] = function_name
     except SpecificationError as e:
         return SpecificationErrorResult(error=f"Line {e.lineno}. {str(e)}")
     if check_timeout:
