@@ -365,7 +365,7 @@ def bar(a):
 """
     tests = [
         {"input_args": ["1"], "output": "2", "function_name": "bar"},
-        {"input_args": ["1"], "output": "1", "function_name": "foo"}
+        {"input_args": ["1"], "output": "1", "function_name": "foo"},
     ]
     result_list = get_response(source, tests)
     SuccessResult.model_validate(result_list[0])

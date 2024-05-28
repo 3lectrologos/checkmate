@@ -43,3 +43,14 @@ def f(x):
     result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
     RuntimeErrorResult.model_validate(result_list[0])
+
+
+def test_keyboard_interrupt_timeout():
+    source = """
+def f(x):
+    raise KeyboardInterrupt
+"""
+    tests = [{"input_args": ["1"], "output": "2"}]
+    result_list = get_response(source, tests, check_timeout=True)
+    assert len(result_list) == 1
+    TimeoutResult.model_validate(result_list[0])

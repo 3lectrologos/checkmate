@@ -85,6 +85,8 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
     try:
         fun = string_to_lambda(source, function_name)
         result = fun(*input_args)
+    except KeyboardInterrupt:
+        return TimeoutResult(**error_dict)
     except Exception:
         error_string = get_runtime_error_string(sys.exc_info())
         return RuntimeErrorResult(error=error_string, **error_dict)
