@@ -4,9 +4,9 @@ from typing import Optional, Literal, Union, Annotated, Any
 
 
 class Test(BaseModel):
-    input_args: list[Any]
-    output_args: Optional[list[Any]] = None
-    output: Optional[Any] = None
+    input_args: list[str]
+    output_args: Optional[list[str | None]] = None
+    output: Optional[str] = None
     function_name: Optional[str] = None
 
     @root_validator(skip_on_failure=True)
