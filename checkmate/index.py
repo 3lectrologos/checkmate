@@ -2,6 +2,7 @@ import sys
 import traceback
 import functools
 import multiprocessing
+import reprlib
 from .types import *
 
 from .spec_check import check_specification, SpecificationError
@@ -49,6 +50,10 @@ def get_runtime_error_string(exc_info):
     return f"Line {line_number}. {error_string}"
 
 
+def stringify(value: any) -> str:
+    return reprlib.repr(value)
+
+
 def run_one(source, test, function_name, is_linked_list, is_level5, check_timeout) -> Result:
     try:
         input_args = parse_args(test.input_args, linked_list=is_linked_list)
@@ -59,11 +64,11 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         return SpecificationErrorResult(error="Invalid test specification.")
 
     error_dict = {
-        "input_args": [repr(arg) for arg in input_args],
-        "expected_output": repr(parsed_output),
+        "input_args": [stringify(arg) for arg in input_args],
+        "expected_output": stringify(parsed_output),
     }
     if output_args is not None:
-        error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
+        error_dict["expected_output_args"] = [stringify(arg) for arg in output_args]
     try:
         compile(source, "<string>", "exec")
     except Exception as e:
@@ -92,16 +97,16 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         return RuntimeErrorResult(error=error_string, **error_dict)
     if parsed_output is not None and result != parsed_output:
         return FailResult(
-            output=repr(result),
-            output_args=[repr(arg) for arg in input_args],
+            output=stringify(result),
+            output_args=[stringify(arg) for arg in input_args],
             **error_dict,
         )
     if output_args is not None:
         for i in range(len(output_args)):
             if (output_args[i] is not None) and (input_args[i] != output_args[i]):
                 return FailResult(
-                    output=repr(result),
-                    output_args=[repr(arg) for arg in input_args],
+                    output=stringify(result),
+                    output_args=[stringify(arg) for arg in input_args],
                     **error_dict,
                 )
     return SuccessResult()
