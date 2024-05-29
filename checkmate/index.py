@@ -63,7 +63,7 @@ def run_one(source, test, function_name, is_linked_list, is_level5, check_timeou
         "expected_output": repr(parsed_output),
     }
     if output_args is not None:
-        error_dict["expected_output_args"] = output_args
+        error_dict["expected_output_args"] = [repr(arg) for arg in output_args]
     try:
         compile(source, "<string>", "exec")
     except Exception as e:

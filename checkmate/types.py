@@ -38,9 +38,9 @@ class ResultType(str, Enum):
 
 class BaseErrorResult(BaseModel):
     arg_names: list[str]
-    input_args: list[Any]
-    expected_output_args: Optional[list[Any]] = None
-    expected_output: Any
+    input_args: list[str]
+    expected_output_args: Optional[list[str | None]] = None
+    expected_output: str
     function_name: str
 
 
@@ -65,8 +65,8 @@ class TimeoutResult(BaseErrorResult):
 
 class FailResult(BaseErrorResult):
     type: Literal[ResultType.FAIL] = ResultType.FAIL
-    output_args: list[Any]
-    output: Any
+    output_args: list[str]
+    output: str
 
 
 class SuccessResult(BaseModel):
