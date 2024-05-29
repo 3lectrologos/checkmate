@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = 'checkmate'
-version = '0.2.1'
+version = '0.2.2'
 description = 'An API for testing a Python function on an input / output suite.'
 authors = [
     {name = 'Alkis Gotovos', email = 'alkis.gotovos@gmail.com'},
