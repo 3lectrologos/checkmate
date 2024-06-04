@@ -11,6 +11,15 @@ from .spec_check import check_specification, SpecificationError
 TIMEOUT_SECONDS = 4
 
 
+myRepr = reprlib.Repr()
+myRepr.maxtuple = 10
+myRepr.maxlist = 10
+myRepr.maxarray = 10
+myRepr.maxset = 10
+myRepr.maxfrozenset = 10
+myRepr.maxdict = 10
+
+
 def string_to_lambda(source, function_name):
     custom_namespace = {}
     exec(source, custom_namespace)
@@ -51,7 +60,7 @@ def get_runtime_error_string(exc_info):
 
 
 def stringify(value: any) -> str:
-    return reprlib.repr(value)
+    return myRepr.repr(value)
 
 
 def run_one(source, test, function_name, is_linked_list, is_level5, check_timeout) -> Result:
