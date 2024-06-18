@@ -197,6 +197,7 @@ But it will also not interrupt infinite loops, so use with caution.
 
 ## Additional notes
 
-### Running in the main module
-When running on Windows, the code that calls `run_tests` should be in the main module, due to the use of Python multiprocessing.
+### Running on Windows
+When running on Windows, the `run_tests` call should be in the main module, due to the use of Python multiprocessing.
+That is, the code should be inside an `if __name__ == '__main__':` block.
 For more details, see [https://docs.python.org/3/library/multiprocessing.html#programming-guidelines](https://docs.python.org/3/library/multiprocessing.html#programming-guidelines).
