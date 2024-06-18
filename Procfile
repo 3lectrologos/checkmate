@@ -1,1 +1,0 @@
-web: uvicorn checkmate.index:app --workers 3 --host 0.0.0.0 --port $PORT
