@@ -10,7 +10,7 @@ authors = [
     {name = 'Alkis Gotovos', email = 'alkis.gotovos@gmail.com'},
 ]
 license = 'MIT'
-requires-python = '>=3.9'
+requires-python = '>=3.10'
 dependencies = [
     'pydantic==1.10.7',
 ]
