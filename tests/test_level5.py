@@ -1,5 +1,5 @@
 from . import get_response
-from checkmate import SuccessResult, SpecificationErrorResult, RuntimeErrorResult, FailResult
+from checkmate import ResultType
 
 
 def test_linked_list_operations_not_available():
@@ -12,7 +12,7 @@ def f(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_linked_list_operations_available():
@@ -25,7 +25,7 @@ def f(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_when_run_not_found():
@@ -38,7 +38,7 @@ def f(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_when_run_found_list_operations_not_available():
@@ -51,7 +51,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_when_run_found_list_operations_available():
@@ -64,7 +64,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_linked_list_modification():
@@ -78,7 +78,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_linked_list_pointer_location_matters_fail():
@@ -92,7 +92,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 0)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    FailResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.FAIL
 
 
 def test_linked_list_pointer_location_matters_success():
@@ -106,7 +106,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 2)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_only_some_output_args_of_interest():
@@ -133,7 +133,7 @@ def when_run(a, b):
     ]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_outer_import_before():
@@ -147,7 +147,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_outer_import_after():
@@ -162,7 +162,7 @@ import numpy
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_inner_import():
@@ -177,7 +177,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_nested_function_import():
@@ -194,7 +194,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "3"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SpecificationErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SPECIFICATION_ERROR
 
 
 def test_linked_list_out_of_bounds_right():
@@ -209,7 +209,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.RUNTIME_ERROR
 
 
 def test_linked_list_out_of_bounds_left():
@@ -224,7 +224,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.RUNTIME_ERROR
 
 
 def test_linked_list_invalid_value():
@@ -235,7 +235,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], None)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.RUNTIME_ERROR
 
 
 def test_linked_list_output_args():
@@ -246,7 +246,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output_args": ["ListPtr([0, 0, 0], 0)"]}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    FailResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.FAIL
 
 
 def test_linked_list_output():
@@ -261,7 +261,7 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "ListPtr([0, 0, 0], 2)"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    SuccessResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.SUCCESS
 
 
 def test_linked_list_output_compared_to_other_type():
@@ -272,4 +272,4 @@ def when_run(a):
     tests = [{"input_args": ["ListPtr([1, 2, 3], 0)"], "output": "ListPtr([0, 0, 0], 0)"}]
     result_list = get_response(source, tests, is_linked_list=True, is_level5=True)
     assert len(result_list) == 1
-    FailResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.FAIL

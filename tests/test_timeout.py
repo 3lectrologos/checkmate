@@ -1,5 +1,5 @@
 from . import get_response
-from checkmate import TimeoutResult, RuntimeErrorResult
+from checkmate import ResultType
 
 
 def test_inner_timeout():
@@ -12,7 +12,7 @@ def f(x):
     tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    TimeoutResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.TIMEOUT
 
 
 def test_outer_timeout():
@@ -26,7 +26,7 @@ while True:
     tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    TimeoutResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.TIMEOUT
 
 
 def test_timeout_with_exception():
@@ -42,7 +42,7 @@ def f(x):
     tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    RuntimeErrorResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.RUNTIME_ERROR
 
 
 def test_keyboard_interrupt_timeout():
@@ -53,4 +53,4 @@ def f(x):
     tests = [{"input_args": ["1"], "output": "2"}]
     result_list = get_response(source, tests, check_timeout=True)
     assert len(result_list) == 1
-    TimeoutResult.model_validate(result_list[0])
+    assert result_list[0].type == ResultType.TIMEOUT

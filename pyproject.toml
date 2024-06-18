@@ -17,13 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    'fastapi>=0.100.1',
-    'httpx>=0.25.0',
     'pytest-cov',
-]
-api = [
-    'fastapi>=0.100.1',
-    'httpx>=0.25.0',
 ]
 
 [tool.black]
