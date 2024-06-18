@@ -156,7 +156,7 @@ You can then specify linked list arguments in the form `ListPtr([1, 2, 3], 0)`, 
 The pointer location for `output_args` and `output` can be `None`, in which case any location is considered correct.
 ```python
 import pprint
-from checkmate import Request, run_tests, ResultType
+from checkmate import Request, run_tests
 
 
 source = """
