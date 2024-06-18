@@ -1,11 +1,11 @@
 from enum import Enum
 from pydantic import BaseModel, Field, root_validator
-from typing import Optional, Literal, Union, Annotated, Any
+from typing import Optional, Literal, Union, Annotated
 
 
 class Test(BaseModel):
     input_args: list[str]
-    output_args: Optional[list[str | None]] = None
+    output_args: Optional[list[Optional[str]]] = None
     output: Optional[str] = None
     function_name: Optional[str] = None
 
@@ -39,7 +39,7 @@ class ResultType(str, Enum):
 class BaseErrorResult(BaseModel):
     arg_names: list[str]
     input_args: list[str]
-    expected_output_args: Optional[list[str | None]] = None
+    expected_output_args: Optional[list[Optional[str]]] = None
     expected_output: str
     function_name: str
 
